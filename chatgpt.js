@@ -1,11 +1,15 @@
-const OpenAI = require("openai");
-const fs = require('fs')
-const session = JSON.parse(fs.readFileSync('./conversation.json')).session
+import OpenAI from "openai";
+import fs from 'fs';
 
-require("dotenv").config();
-console.log(process.env.OPENAI_API_KEY_)
+import { config } from "dotenv";
+config();
+
+console.log(process.env.OPENAI_API_KEY);
+
+const session = JSON.parse(fs.readFileSync('./conversation.json', 'utf-8')).session;
+
 const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY_
+    apiKey: process.env.OPENAI_API_KEY
 });
 
 const chatReq = async (session) => {
@@ -14,21 +18,23 @@ const chatReq = async (session) => {
             model: "gpt-3.5-turbo",
             messages: session,
             temperature: 0,
-            max_tokens: 1000,
+            maxTokens: 1000,
         });
-        session.push(response.choices[0].message)
-        fs.writeFile('conversation.json',JSON.stringify(session),(err) => {
+
+        session.push(response.choices[0].message);
+
+        fs.writeFile('conversation.json', JSON.stringify({ session }), (err) => {
             if (err) {
                 console.error('Error writing JSON to file:', err);
             } else {
                 console.log('JSON data has been written');
             }
-        })
-        return (response.choices[0].message);
+        });
+
+        return response.choices[0].message;
     } catch (err) {
         console.log(err.message);
     }
 };
 
-
-module.exports =  chatReq;
+export default chatReq;
