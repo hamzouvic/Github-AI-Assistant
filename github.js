@@ -8,6 +8,22 @@ const graphqlWithAuth = graphql.defaults({
     },
 });
 
+export async function getUserInfo(username){
+    const mutationQuery = `
+query {
+  user(login:"${username}") {
+    id
+  }
+}`;
+    try {
+        const userInfo = await graphqlWithAuth(mutationQuery);
+        return userInfo;
+    } catch (error) {
+        console.error("Error fetching repository:", error);
+        throw error;
+    }
+}
+
 export async function createProject(name,body,repositoryIds,ownerId,template='BASIC_KANBAN') {
 
     const mutationQuery = `
@@ -26,6 +42,25 @@ mutation {
         return project;
     } catch (error) {
         console.error("Error fetching repository:", error);
+        throw error;
+    }
+}
+export async function linkProjectToRepository(projectId,repositoryId) {
+
+    const mutationQuery = `
+mutation {
+    linkProjectV2ToRepository(input:{
+        projectId : "${projectId}"
+        repositoryId : "${repositoryId}"
+    }){
+        __typename
+    }
+}`;
+    try {
+        const response = await graphqlWithAuth(mutationQuery);
+        return response;
+    } catch (error) {
+        console.error("Error creating issue:", error);
         throw error;
     }
 }
@@ -101,7 +136,24 @@ mutation {
         throw error;
     }
 }
+export async function getRepositoryInfo(owner, name) {
 
+    const mutationQuery = `
+query  {
+    repository(owner:"${owner}",name:"${name}"){
+        id
+    }
+}
+`;
+    try {
+        const repositoryInfo = await graphqlWithAuth(mutationQuery);
+        return repositoryInfo;
+    } catch (error) {
+        console.error("Error adding issue:", error);
+        throw error;
+    }
+
+}
 export async function gettingProjectInformation(projectNumber) {
 
     const mutationQuery = `
@@ -166,6 +218,7 @@ mutation  {
     projectV2{
         id 
         url
+        number
     }
   }
 }
