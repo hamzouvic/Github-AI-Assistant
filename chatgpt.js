@@ -12,6 +12,7 @@ const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
 });
 
+
 const chatReq = async (session) => {
     try {
         const response = await openai.chat.completions.create({
@@ -19,6 +20,7 @@ const chatReq = async (session) => {
             messages: session,
             temperature: 0,
             maxTokens: 1000,
+            n:1
         });
 
         session.push(response.choices[0].message);
