@@ -8,7 +8,7 @@ const graphqlWithAuth = graphql.defaults({
     },
 });
 
-export async function getUserInfo(username){
+export async function getUserInfo(username) {
     const mutationQuery = `
 query {
   user(login:"${username}") {
@@ -24,7 +24,7 @@ query {
     }
 }
 
-export async function createProject(name,body,repositoryIds,ownerId,template='BASIC_KANBAN') {
+export async function createProject(name, body, repositoryIds, ownerId, template = 'BASIC_KANBAN') {
 
     const mutationQuery = `
 mutation {
@@ -45,7 +45,8 @@ mutation {
         throw error;
     }
 }
-export async function linkProjectToRepository(projectId,repositoryId) {
+
+export async function linkProjectToRepository(projectId, repositoryId) {
 
     const mutationQuery = `
 mutation {
@@ -65,7 +66,7 @@ mutation {
     }
 }
 
-export async function createIssue(title,description,repositoryId) {
+export async function createIssue(title, description, repositoryId) {
 
     const mutationQuery = `
 mutation {
@@ -89,7 +90,7 @@ mutation {
     }
 }
 
-export async function addIssueToProject(issueId,projectId) {
+export async function addIssueToProject(issueId, projectId) {
 
     const mutationQuery = `
 mutation {
@@ -111,7 +112,7 @@ mutation {
     }
 }
 
-export async function updateIssueStatus(issueId,projectId,StatusFieldId,newStatusValueId) {
+export async function updateIssueStatus(issueId, projectId, StatusFieldId, newStatusValueId) {
 
     const mutationQuery = `
 mutation {
@@ -136,6 +137,7 @@ mutation {
         throw error;
     }
 }
+
 export async function getRepositoryInfo(owner, name) {
 
     const mutationQuery = `
@@ -146,14 +148,14 @@ query  {
 }
 `;
     try {
-        const repositoryInfo = await graphqlWithAuth(mutationQuery);
-        return repositoryInfo;
+        return await graphqlWithAuth(mutationQuery);
     } catch (error) {
         console.error("Error adding issue:", error);
         throw error;
     }
 
 }
+
 export async function gettingProjectInformation(projectNumber) {
 
     const mutationQuery = `
@@ -198,8 +200,7 @@ query  {
 }
 `;
     try {
-        const projectInformation = await graphqlWithAuth(mutationQuery);
-        return projectInformation;
+        return await graphqlWithAuth(mutationQuery);
     } catch (error) {
         console.error("Error adding issue:", error);
         throw error;
@@ -233,4 +234,12 @@ mutation  {
 }
 
 
+export async function uploadProject(session) {
+//     verify if there is a project on the repo
+//     create a project from the clone
+//     get the issues from chatgpt
+//     format the issues
+//     create the issues and add them to the project
 
+
+}

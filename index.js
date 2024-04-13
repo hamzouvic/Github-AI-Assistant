@@ -1,5 +1,5 @@
 import express from 'express';
-import chatReq from "./chatgpt.js";
+import {getSession, chatReq, writeFile, saveSession} from "./chatgpt.js";
 import fs from "fs";
 import {
     createIssue,
@@ -7,7 +7,7 @@ import {
     createProjectFromCopy,
     gettingProjectInformation,
     getRepositoryInfo,
-    getUserInfo, addIssueToProject, updateIssueStatus, linkProjectToRepository
+    getUserInfo, addIssueToProject, updateIssueStatus, linkProjectToRepository, uploadProject
 } from "./github.js";
 
 const app = express();
@@ -24,40 +24,35 @@ app.get('/', async (req, res) => {
     res.send(response);
 });
 
-app.get('/conversation', (req, res) => {
-    const buffer = fs.readFileSync('./conversation.json');
-    res.json(JSON.parse(buffer));
+app.get('/session', (req, res) => {
+    res.json(getSession());
 });
 
 app.post('/prompt', async (req, res) => {
     const prompt = req.body.prompt;
-    console.log('propmt', req.body);
-    const data = {
-        role: 'user',
-        content: prompt
-    };
-    const session = JSON.parse(fs.readFileSync('conversation.json'));
-    session.push(data);
-    console.log(req.body);
-    const response = await chatReq(session);
-    fs.writeFile('conversation.json', JSON.stringify(session), (err) => {
-        if (err) {
-            console.error('Error writing JSON to file:', err);
-        } else {
-            console.log('JSON data has been written');
-        }
-    });
-    res.json(response);
+    if(prompt === "" || prompt === undefined){
+        return res.status(404)
+    }else if (prompt.trim() === "UPLOAD") {
+        const session = getSession()
+
+        await uploadProject(session)
+    } else {
+        const session = getSession()
+        const data = {
+            role: 'user',
+            content: prompt
+        };
+        session.push(data);
+        const response = await chatReq(session);
+        saveSession(session)
+        res.json(response);
+    }
 });
 
 app.get('/github', async (req, res) => {
-    const repo = await createProject('HAMZAv2','from app','R_kgDOLewzyg','U_kgDOCGQidw');
+    const repo = await createProject('HAMZAv2', 'from app', 'R_kgDOLewzyg', 'U_kgDOCGQidw');
     console.log('repo ', repo);
     res.json(repo);
-});
-
-app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`);
 });
 
 const projectClone = `{
@@ -202,7 +197,7 @@ const issueClone = `{
 }`
 
 const projectIssueClone = `{"addProjectV2ItemById":{"item":{"id":"PVTI_lAHOCGQid84Ae4vlzgNqku0"}}}`
-app.get('/test',async (req,res)=>{
+app.get('/test', async (req, res) => {
 // //     get user Id
 //     const projectIdClone = "PVT_kwDOBYVjWc4AJhcX"
 //     const userInfo = await getUserInfo("hamzouvic")
@@ -213,9 +208,9 @@ app.get('/test',async (req,res)=>{
 //     const projectInfo = await gettingProjectInformation(project.copyProjectV2.projectV2.number)
     const projectInfo = JSON.parse(projectClone)
 
-    const repositoyInfo = await getRepositoryInfo("hamzouvic","testing-app")
+    const repositoyInfo = await getRepositoryInfo("hamzouvic", "testing-app")
     return res.json(repositoyInfo)
-    await linkProjectToRepository(projectInfo.user.projectV2.id,repositoyInfo.repository.id)
+    await linkProjectToRepository(projectInfo.user.projectV2.id, repositoyInfo.repository.id)
 
     const status = projectInfo.user.projectV2.fields.nodes[2]
     // create an issue :
@@ -226,7 +221,12 @@ app.get('/test',async (req,res)=>{
 //     const projectIssue = await addIssueToProject(issue.createIssue.issue.id,projectInfo.user.projectV2.id)
     const projectIssue = JSON.parse(projectIssueClone)
 //     change Status of issue :
-    const updatedIssue = await updateIssueStatus(projectIssue.addProjectV2ItemById.item.id,projectInfo.user.projectV2.id,
-        status.id,status.options[2].id)
+    const updatedIssue = await updateIssueStatus(projectIssue.addProjectV2ItemById.item.id, projectInfo.user.projectV2.id,
+        status.id, status.options[2].id)
     res.json(updatedIssue)
 })
+
+app.listen(port, () => {
+    console.log(`Example app listening on port ${port}`);
+});
+
