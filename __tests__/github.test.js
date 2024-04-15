@@ -1,5 +1,5 @@
-describe('testing github', ()=>{
-    it('should be working', () => {
-        expect(true).toBe(true)
-    });
-})
+describe('testing github', () => {
+  it('should be working', () => {
+    expect(true).toBe(true);
+  });
+});

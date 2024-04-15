@@ -1,65 +1,65 @@
 import express from 'express';
-import {getSession, chatReq, writeFile, saveSession} from "./chatgpt.js";
-import fs from "fs";
-import {
-    createIssue,
-    createProject,
-    createProjectFromCopy,
-    gettingProjectInformation,
-    getRepositoryInfo,
-    getUserInfo, addIssueToProject, updateIssueStatus, linkProjectToRepository, uploadProject
-} from "./github.js";
 
-import {config} from "dotenv";
+import { config } from 'dotenv';
+
+import bodyParser from 'body-parser';
+import cors from 'cors';
+import {
+  createIssue,
+  createProject,
+  createProjectFromCopy,
+  gettingProjectInformation,
+  getRepositoryInfo,
+  getUserInfo, addIssueToProject, updateIssueStatus, linkProjectToRepository, uploadProject,
+} from './github.js';
+import {
+  getSession, chatReq, writeFile, saveSession,
+} from './chatgpt.js';
 
 config();
 
-
 const app = express();
 const port = process.env.port | 8080;
-
-import bodyParser from 'body-parser';
-import cors from "cors";
 
 app.use(bodyParser.json());
 app.use(cors());
 
 app.get('/', async (req, res) => {
-    const response = await chatReq();
-    res.send(response);
+  const response = await chatReq();
+  res.send(response);
 });
 
 app.get('/session', (req, res) => {
-    console.log('here')
-    res.json(getSession());
+  console.log('here');
+  res.json(getSession());
 });
 
 app.post('/prompt', async (req, res) => {
-    const prompt = req.body.prompt;
-    if(prompt === "" || prompt === undefined){
-        return res.status(404)
-    }else if (prompt.trim() === "UPLOAD") {
-        const session = getSession()
+  const { prompt } = req.body;
+  if (prompt === '' || prompt === undefined) {
+    return res.status(404);
+  } if (prompt.trim() === 'UPLOAD') {
+    const session = getSession();
 
-        await uploadProject(session)
-    } else {
-        const session = getSession()
-        const data = {
-            role: 'user',
-            content: prompt
-        };
-        session.push(data);
-        const response = await chatReq(session);
-        session.push(response)
-        saveSession(session)
-        res.json(response);
-    }
+    await uploadProject(session);
+  } else {
+    const session = getSession();
+    const data = {
+      role: 'user',
+      content: prompt,
+    };
+    session.push(data);
+    const response = await chatReq(session);
+    session.push(response);
+    saveSession(session);
+    res.json(response);
+  }
 });
 
 app.get('/github', async (req, res) => {
-    const repo = await createProject('HAMZAv2', 'from app', 'R_kgDOLewzyg', 'U_kgDOCGQidw');
-    console.log('repo ', repo);
-    res.json(repo);
+  const repo = await createProject('HAMZAv2', 'from app', 'R_kgDOLewzyg', 'U_kgDOCGQidw');
+  console.log('repo ', repo);
+  res.json(repo);
 });
 
 const projectClone = `{
@@ -192,7 +192,7 @@ const projectClone = `{
       }
     }
   }
-}`
+}`;
 
 const issueClone = `{
   "createIssue": {
@@ -201,9 +201,9 @@ const issueClone = `{
       "id": "I_kwDOLewzys6DPmmD"
     }
   }
-}`
+}`;
 
-const projectIssueClone = `{"addProjectV2ItemById":{"item":{"id":"PVTI_lAHOCGQid84Ae4vlzgNqku0"}}}`
+const projectIssueClone = '{"addProjectV2ItemById":{"item":{"id":"PVTI_lAHOCGQid84Ae4vlzgNqku0"}}}';
 app.get('/test', async (req, res) => {
 // //     get user Id
 //     const projectIdClone = "PVT_kwDOBYVjWc4AJhcX"
@@ -213,27 +213,28 @@ app.get('/test', async (req, res) => {
 //     const project = await createProjectFromCopy(userId,projectIdClone)
 // //     getProjectInformation
 //     const projectInfo = await gettingProjectInformation(project.copyProjectV2.projectV2.number)
-    const projectInfo = JSON.parse(projectClone)
+  const projectInfo = JSON.parse(projectClone);
 
-    const repositoyInfo = await getRepositoryInfo("hamzouvic", "testing-app")
-    return res.json(repositoyInfo)
-    await linkProjectToRepository(projectInfo.user.projectV2.id, repositoyInfo.repository.id)
+  const repositoyInfo = await getRepositoryInfo('hamzouvic', 'testing-app');
+  return res.json(repositoyInfo);
+  await linkProjectToRepository(projectInfo.user.projectV2.id, repositoyInfo.repository.id);
 
-    const status = projectInfo.user.projectV2.fields.nodes[2]
-    // create an issue :
-    // const issue = await createIssue('issue #2',"this is a description from the app",repositoyInfo.repository.id)
-    const issue = JSON.parse(issueClone)
+  const status = projectInfo.user.projectV2.fields.nodes[2];
+  // create an issue :
+  // const issue = await createIssue('issue #2',"this is a description from the app",repositoyInfo.repository.id)
+  const issue = JSON.parse(issueClone);
 
-//     add issue to projectreturn
-//     const projectIssue = await addIssueToProject(issue.createIssue.issue.id,projectInfo.user.projectV2.id)
-    const projectIssue = JSON.parse(projectIssueClone)
-//     change Status of issue :
-    const updatedIssue = await updateIssueStatus(projectIssue.addProjectV2ItemById.item.id, projectInfo.user.projectV2.id,
-        status.id, status.options[2].id)
-    res.json(updatedIssue)
-})
-
-app.listen(port, () => {
-    console.log(`app listening on port ${port}`);
+  //     add issue to projectreturn
+  //     const projectIssue = await addIssueToProject(issue.createIssue.issue.id,projectInfo.user.projectV2.id)
+  const projectIssue = JSON.parse(projectIssueClone);
+  //     change Status of issue :
+  const updatedIssue = await updateIssueStatus(
+    projectIssue.addProjectV2ItemById.item.id,
+    projectInfo.user.projectV2.id,
+    status.id,
+    status.options[2].id,
+  );
+  res.json(updatedIssue);
 });
 
+app.listen(port);
