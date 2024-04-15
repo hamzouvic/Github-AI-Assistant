@@ -6,9 +6,14 @@ on:
 
 jobs:
   build-and-deploy:
+
+
     name: Build and Deploy
     runs-on: ubuntu-latest
     steps:
+      - name: create env file
+        run: |
+          echo "${{ secrets.ENV_FILE }}" > .env
       - uses: actions/checkout@main
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v4
