@@ -2,5 +2,49 @@
   {
     "role": "system",
     "content": "As a requirement engineer your task is to create a requirement specification. The requirement specification must fulfill the following constraints: Understand my software project idea. Ask the necessary questions to understand the constraints (you must ask one question at time never more). Based on the answers create requirement specification. Explain your understanding and construct your proposal to me representing the project manager. Provide your output in table format. After an approval from the user I want you As a kanban expert your task is to create a kanban cards. Generate kanban cards of the tasks needed in order to realise the requirements .the tasks must fulfill the following constraints: break requirements into small tasks and each task needs to be SMART and technical (for example : implement authorization for backend). Provide your output in csv format that contains the following columns : id, name, description, use case, estimated time, importance."
+  },
+  {
+    "role": "assistant",
+    "content": "Sure, I'd be happy to help you with that. Could you please provide me with a brief overview of your software project idea?"
+  },
+  {
+    "role": "user",
+    "content": "my idea is an android app to manage medical reservation and searching for doctors in the area"
+  },
+  {
+    "role": "assistant",
+    "content": "Great, thank you for sharing that. In order to better understand your project, could you please clarify if the app will allow users to book appointments with doctors directly through the app or will it simply provide information about doctors and their availability?"
+  },
+  {
+    "role": "user",
+    "content": "directly throw the app"
+  },
+  {
+    "role": "assistant",
+    "content": "Thank you for the clarification. Based on your project idea of developing an Android app for managing medical reservations and booking appointments with doctors, I will now proceed to create a requirement specification in table format:\n\n| Requirement ID | Requirement Description                                                                                   | Priority |\n|----------------|----------------------------------------------------------------------------------------------------------|----------|\n| REQ-001        | User registration and login functionality                                                                   | High     |\n| REQ-002        | Search functionality to find doctors based on location, specialty, availability, and ratings           | High     |\n| REQ-003        | Display detailed information about doctors including their profile, qualifications, and reviews        | Medium   |\n| REQ-004        | Booking appointment feature allowing users to select a doctor, date, and time for the appointment       | High     |\n| REQ-005        | Notification system to remind users of upcoming appointments and provide updates on booking status      | Medium   |\n| REQ-006        | User profile management to update personal information, view appointment history, and manage bookings  | High     |\n| REQ-007        | Integration with a payment gateway for processing appointment fees                                      | High     |\n| REQ-008        | Feedback and rating system for users to rate and review doctors after appointments                      | Medium   |\n| REQ-009        | Secure storage of user data and compliance with data protection regulations                              | High     |\n\nPlease review the requirement specification table and let me know if you have any feedback or if there are any additional requirements you would like to include."
+  },
+  {
+    "role": "user",
+    "content": "can u make them more atomic"
+  },
+  {
+    "role": "assistant",
+    "content": "Sure, I will break down the requirements into smaller, more atomic tasks. Here is the updated requirement specification table with more granular tasks:\n\n| Requirement ID | Requirement Description                                                                                   | Priority |\n|----------------|----------------------------------------------------------------------------------------------------------|----------|\n| REQ-001        | Implement user registration functionality                                                                   | High     |\n| REQ-002        | Develop user login feature                                                                                 | High     |\n| REQ-003        | Create search functionality for finding doctors by location                                                | High     |\n| REQ-004        | Enable search by doctor's specialty and availability                                                        | High     |\n| REQ-005        | Implement doctor rating system                                                                             | Medium   |\n| REQ-006        | Display detailed doctor profiles with qualifications and reviews                                            | Medium   |\n| REQ-007        | Develop appointment booking feature allowing selection of doctor, date, and time                          | High     |\n| REQ-008        | Implement notification system for appointment reminders and booking updates                                 | Medium   |\n| REQ-009        | Create user profile management feature for updating personal information and viewing appointment history  | High     |\n| REQ-010        | Integrate payment gateway for processing appointment fees                                                   | High     |\n| REQ-011        | Implement feedback and rating system for users to rate and review doctors                                  | Medium   |\n| REQ-012        | Ensure secure storage of user data and compliance with data protection regulations                          | High     |\n\nPlease review the updated requirement specification table and let me know if you have any further feedback or if you would like to make any changes."
+  },
+  {
+    "role": "user",
+    "content": "ok great I like that "
+  },
+  {
+    "role": "assistant",
+    "content": "Great! Now that the requirement specification has been approved, I will proceed to create the Kanban cards for the tasks needed to realize the requirements. Each task will be broken down into smaller, SMART (Specific, Measurable, Achievable, Relevant, Time-bound) technical tasks. Here is the CSV format for the Kanban cards:\n\nid, name, description, use case, estimated time, importance\n1, Implement user registration functionality, Develop the feature that allows users to register in the app, User registration, 8 hours, High\n2, Develop user login feature, Create the functionality for users to log in to their accounts, User login, 6 hours, High\n3, Create search functionality for finding doctors by location, Implement search feature based on user's location, Doctor search, 10 hours, High\n4, Enable search by doctor's specialty and availability, Add filters for searching doctors by specialty and availability, Doctor search, 8 hours, High\n5, Implement doctor rating system, Develop the feature for users to rate doctors after appointments, Doctor rating, 6 hours, Medium\n6, Display detailed doctor profiles with qualifications and reviews, Design the UI to show doctor profiles with detailed information, Doctor profiles, 10 hours, Medium\n7, Develop appointment booking feature allowing selection of doctor, date, and time, Create the functionality for users to book appointments with doctors, Appointment booking, 12 hours, High\n8, Implement notification system for appointment reminders and booking updates, Set up notifications for reminding users of upcoming appointments, Notifications, 8 hours, Medium\n9, Create user profile management feature for updating personal information and viewing appointment history, Develop the feature for users to manage their profiles and view appointment history, User profile management, 10 hours, High\n10, Integrate payment gateway for processing appointment fees, Connect the app with a payment gateway for processing appointment payments, Payment integration, 12 hours, High\n11, Implement feedback and rating system for users to rate and review doctors, Develop the feature for users to provide feedback and ratings for doctors, Feedback system, 8 hours, Medium\n12, Ensure secure storage of user data and compliance with data protection regulations, Implement data security measures to protect user data and comply with regulations, Data security, 10 hours, High\n\nPlease review the Kanban cards and let me know if you have any feedback or if there are any additional tasks you would like to include."
+  },
+  {
+    "role": "user",
+    "content": "for now that is ok"
+  },
+  {
+    "role": "assistant",
+    "content": "Great! If you need any further assistance or have any additional requirements in the future, feel free to reach out. Good luck with your project!"
   }
 ]

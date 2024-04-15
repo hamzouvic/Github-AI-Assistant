@@ -1,5 +1,6 @@
 import {graphql} from "@octokit/graphql";
 import {config} from "dotenv";
+import {chatReq} from "./chatgpt.js";
 
 config();
 const graphqlWithAuth = graphql.defaults({
@@ -82,8 +83,7 @@ mutation {
     }
 }`;
     try {
-        const issue = await graphqlWithAuth(mutationQuery);
-        return issue;
+        return await graphqlWithAuth(mutationQuery);
     } catch (error) {
         console.error("Error creating issue:", error);
         throw error;
@@ -214,7 +214,7 @@ mutation  {
   copyProjectV2(input: {
     ownerId: "${userId}"
     projectId: "${projectId}"
-    title : "this is a clone project 4"
+    title : "changing status final "
   }) {
     projectV2{
         id 
@@ -235,11 +235,60 @@ mutation  {
 
 
 export async function uploadProject(session) {
-//     verify if there is a project on the repo
 //     create a project from the clone
-//     get the issues from chatgpt
+    const projectIdClone = "PVT_kwDOBYVjWc4AJhcX"
+    const userInfo = await getUserInfo("hamzouvic")
+    const userId = userInfo.user.id
+//     create project from template
+    const project = await createProjectFromCopy(userId,projectIdClone)
+//     getProjectInformation
+    const projectInfo = await gettingProjectInformation(project.copyProjectV2.projectV2.number)
+
+    const repositoyInfo = await getRepositoryInfo("hamzouvic", "testing-app")
+    await linkProjectToRepository(projectInfo.user.projectV2.id, repositoyInfo.repository.id)
+
+    const formattingPrompt = {
+        role : "user",
+        content : "return only the csv file without any other word"
+    }
+    session.push(formattingPrompt)
+    const response = await chatReq(session)
+    const rows = response.content.split('\n')
+    rows.map(async (row) =>{
+
+        const info = await formatIssue(row)
+        const issue  = await createIssue(info.title,info.description,repositoyInfo.repository.id)
+        const issueId = await addIssueToProject(issue.createIssue.issue.id, projectInfo.user.projectV2.id)
+
+        const status = projectInfo.user.projectV2.fields.nodes[2]
+        const priority = projectInfo.user.projectV2.fields.nodes[8]
+        const estimatedTime = projectInfo.user.projectV2.fields.nodes[9]
+        await updateIssueStatus(issueId.addProjectV2ItemById.item.id,
+            projectInfo.user.projectV2.id,
+            status.id,
+            status.options[1].id)
+        await updateIssueStatus(issueId.addProjectV2ItemById.item.id,
+            projectInfo.user.projectV2.id,
+            priority.id,
+            priority.options[3].id
+            )
+        await updateIssueStatus(issueId.addProjectV2ItemById.item.id,
+            projectInfo.user.projectV2.id,
+            estimatedTime.id,
+            estimatedTime.options[3].id
+        )
+    })
+// get the issues from chatgpt
 //     format the issues
 //     create the issues and add them to the project
+}
 
+export async function formatIssue(raw){
+    const information = raw.split(",")
+    const id = information[0]
+    const title = information[1]
+    const description = information.slice(2,-1).join(',')
+    const priority = information[-1]
+    return {id,title,description, priority}
 
 }

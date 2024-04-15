@@ -25,6 +25,7 @@ app.get('/', async (req, res) => {
 });
 
 app.get('/session', (req, res) => {
+    console.log('here')
     res.json(getSession());
 });
 
@@ -44,6 +45,7 @@ app.post('/prompt', async (req, res) => {
         };
         session.push(data);
         const response = await chatReq(session);
+        session.push(response)
         saveSession(session)
         res.json(response);
     }
@@ -217,7 +219,7 @@ app.get('/test', async (req, res) => {
     // const issue = await createIssue('issue #2',"this is a description from the app",repositoyInfo.repository.id)
     const issue = JSON.parse(issueClone)
 
-//     add issue to project
+//     add issue to projectreturn
 //     const projectIssue = await addIssueToProject(issue.createIssue.issue.id,projectInfo.user.projectV2.id)
     const projectIssue = JSON.parse(projectIssueClone)
 //     change Status of issue :

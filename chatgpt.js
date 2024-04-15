@@ -20,7 +20,7 @@ const readFile = (fileName) => {
 }
 
 export const getSession = () => {
-    return JSON.parse(readFile('conversation.json')).session
+    return JSON.parse(readFile('conversation.json'))
 }
 
 export const saveSession = (session) =>{
@@ -28,7 +28,7 @@ export const saveSession = (session) =>{
 }
 
 export const writeFile = (fileName, session) => {
-    fs.writeFile(fileName, JSON.stringify({session}), (err) => {
+    fs.writeFile(fileName, JSON.stringify(session), (err) => {
         if (err) {
             console.error('Error writing JSON to file:', err);
             return false;
@@ -44,11 +44,9 @@ export const chatReq = async (session) => {
             model: "gpt-3.5-turbo",
             messages: session,
             temperature: 0,
-            maxTokens: 1000,
+            max_tokens: 1000,
             n: 1
         });
-        session.push(response.choices[0].message);
-        writeFile('conversation.json', session)
         return response.choices[0].message;
     } catch (err) {
         console.log(err.message);
