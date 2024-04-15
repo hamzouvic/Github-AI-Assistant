@@ -10,8 +10,13 @@ import {
     getUserInfo, addIssueToProject, updateIssueStatus, linkProjectToRepository, uploadProject
 } from "./github.js";
 
+import {config} from "dotenv";
+
+config();
+
+
 const app = express();
-const port = 3000;
+const port = process.env.port | 8080;
 
 import bodyParser from 'body-parser';
 import cors from "cors";
@@ -229,6 +234,6 @@ app.get('/test', async (req, res) => {
 })
 
 app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`);
+    console.log(`app listening on port ${port}`);
 });
 
